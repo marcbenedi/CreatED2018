@@ -3,11 +3,11 @@
 from flask import Flask
 from flask import request
 import pytesseract
-import sys
 
-sys.path.append('..')
+
 #imported files
 import descriptor
+import temperature
 app = Flask(__name__)
 
 #tasks = send image, read image, send temperature, play music.
@@ -58,7 +58,6 @@ def describeImageRequest():
 
 @app.route('/readImage')
 def readImageRequest():
-    CURRENT_INSTRUCTION = 1
     if current_rasp_image is None:
         pass
     else:
@@ -66,7 +65,14 @@ def readImageRequest():
         #send to google
     return "ok"
 
-
+@app.route('/getTemperature')
+def getTemperatureRequest():
+    if current_rasp_temp is None:
+        pass
+    else:
+        sent = temperature.create_sentence(current_rasp_temp)
+        #send to google
+    return "ok"
 
 #python aux functions
 def describeImage(img):
