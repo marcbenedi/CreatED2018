@@ -4,6 +4,8 @@ from flask import Flask
 from flask import request
 import pytesseract
 import sys
+
+sys.path.append('..')
 #imported files
 import descriptor
 app = Flask(__name__)
