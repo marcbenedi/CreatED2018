@@ -35,6 +35,7 @@ def imageToServer():
         readImage(image)
     else :
         pass
+    return "ok"
 
 @app.route('/describeImage')
 def describeImageRequest():
@@ -44,6 +45,7 @@ def describeImageRequest():
     else:
         sent = describeImage(current_rasp_image)
         #send to google
+    return "ok"
 
 @app.route('/readImage')
 def readImageRequest():
@@ -52,8 +54,8 @@ def readImageRequest():
         pass
     else:
         sent = readImage(current_rasp_image)
-        #send to google 
-
+        #send to google
+    return "ok"
 
 
 
