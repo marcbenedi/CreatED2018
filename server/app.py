@@ -25,6 +25,7 @@ def index():
 
 @app.route('/putInfo',methods=['POST'])
 def imageToServer():
+    print (request.form)
     image = request.args.get('image')
     current_rasp_image = image
     current_rasp_temp = request.args.get('temp')
