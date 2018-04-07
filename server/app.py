@@ -25,10 +25,18 @@ def index():
 
 @app.route('/putInfo',methods=['POST'])
 def imageToServer():
-    print (request.form)
-    image = request.args.get('image')
-    current_rasp_image = image
-    current_rasp_temp = request.args.get('temp')
+    print (request.json)
+#    image = request.args.get('image')
+#    current_rasp_image = image
+#    current_rasp_temp = request.args.get('temp')
+    if request.headers['Content-Type'] == 'application/octet-stream':
+        with open('./binary', 'wb') as f:
+            f.write(request.data)
+            f.close()
+        return "Binary message written!"
+    elif request.headers['Content-Type'] == 'text/plain':
+        print(request.data)
+        return "Text Message: " + request.data
 
     if CURRENT_INSTRUCTION==0:
         describeImage(image)
@@ -36,7 +44,7 @@ def imageToServer():
         readImage(image)
     else :
         pass
-    return "ok"
+    return 200
 
 @app.route('/describeImage')
 def describeImageRequest():
