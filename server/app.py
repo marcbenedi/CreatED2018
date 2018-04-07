@@ -5,13 +5,13 @@ from flask import request
 import pytesseract
 import sys
 #imported files
-sys.path.append('..')
 import descriptor
 app = Flask(__name__)
 
 #tasks = send image, read image, send temperature, play music.
 #           0           1               2           3
 current_rasp_image = None
+current_rasp_temp = None
 CURRENT_INSTRUCTION = -1
 # 0 = describe
 # 1 = read_image
@@ -34,6 +34,8 @@ def nextInstruction():
 def imageToServer():
     image = request.args.get('image')
     current_rasp_image = image
+    #current_rasp_temp = request.args.get('temperature')
+
     if CURRENT_INSTRUCTION==0:
         describeImage(image)
     elif CURRENT_INSTRUCTION==1:
@@ -70,3 +72,6 @@ def readImage(img):
     sentence = pytesseract.image_to_string(img)
     #send sentence to google
     CURRENT_INSTRUCTION= -1
+
+if __name__ == '__main__':
+    app.run(debug=True, port=65010)
