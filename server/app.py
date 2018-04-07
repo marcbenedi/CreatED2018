@@ -23,20 +23,11 @@ def index():
     return "prova"
 
 
-@app.route('/getNextInstruction')
-def nextInstruction():
-    #0 = send an image
-    #1 = send the temperature
-    if CURRENT_INSTRUCTION== 0 or CURRENT_INSTRUCTION==1:
-        return 0
-    else :
-        return -1
-
-@app.route('/sendImageToServer',methods=['POST'])
+@app.route('/putInfo',methods=['POST'])
 def imageToServer():
     image = request.args.get('image')
     current_rasp_image = image
-    #current_rasp_temp = request.args.get('temperature')
+    current_rasp_temp = request.args.get('temp')
 
     if CURRENT_INSTRUCTION==0:
         describeImage(image)
@@ -51,7 +42,8 @@ def describeImageRequest():
     if current_rasp_image is None:
         pass
     else:
-        describeImage(current_rasp_image)
+        sent = describeImage(current_rasp_image)
+        #send to google
 
 @app.route('/readImage')
 def readImageRequest():
@@ -59,7 +51,8 @@ def readImageRequest():
     if current_rasp_image is None:
         pass
     else:
-        readImage(current_rasp_image)
+        sent = readImage(current_rasp_image)
+        #send to google 
 
 
 
@@ -67,13 +60,11 @@ def readImageRequest():
 #python aux functions
 def describeImage(img):
     sentence = descriptor.describe(img)
-    #send sentence to google
-    CURRENT_INSTRUCTION = -1
+    return sentence
 
 def readImage(img):
     sentence = pytesseract.image_to_string(img)
-    #send sentence to google
-    CURRENT_INSTRUCTION= -1
+    return sentence
 
 if __name__ == '__main__':
     app.run(debug=True, port=8092)
