@@ -21,15 +21,15 @@ def get_sentence (json_text):
 
 
     sentence = ""
-    if len(nouns>0):
-        if len(nouns==1):
+    if len(nouns)>0:
+        if len(nouns)==1:
             sentence = nouns[0]
         else:
             sentence = " a ".join(nouns[:-1])
         sentence = "There is a "+sentence
-        if len (nouns>2):
+        if len (nouns)>2:
             sentence = sentence +" and a "+nouns[-1]
-    if len(negatives>0):
+    if len(negatives)>0:
         if (len(negatives)==1):
             negSent = negatives[0]
         else:
