@@ -49,6 +49,10 @@ def imageToServer():
 @app.route('/describeImage')
 def describeImageRequest():
     CURRENT_INSTRUCTION = 0
+    b = None
+    with open('binary','rb') as f:
+	b = f.read()
+    current_rasp_image = b
     if current_rasp_image is None:
         pass
     else:
