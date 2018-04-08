@@ -46,14 +46,15 @@ def imageToServer():
 
 @app.route('/describeImage')
 def describeImageRequest():
-
+    #Uncomment the following line to only test this method
+    #current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
     if current_rasp_image is None:
         pass
     else:
         sent = describeImage(current_rasp_image)
         #send to google
         return sent
-    return  "done"
+    return  "ok"
 
 @app.route('/readImage')
 def readImageRequest():

@@ -1,4 +1,10 @@
 import nltk
+def startsWithVowel (word):
+    vowels = 'aeiou'
+    if word[0].lower() in vowels:
+        return True
+    else:
+        return False
 def get_sentence (json_text):
     outputs = json_text['outputs']
     data = outputs[0]['data']
@@ -36,4 +42,14 @@ def get_sentence (json_text):
             negSent = " nor a ".join(negatives)
         negSent = " However, there isn't any " + negSent
         sentence = sentence+negSent
+
+    sentence = indefiniteArticleFix(sentence)
     return sentence
+
+def indefiniteArticleFix(sentence):
+    s = sentence.split()
+    for i in range(len(s)-1):
+        if s[i]=="a" and startsWithVowel(s[i+1]):
+            s[i]="an"
+
+    return " ".join(s)
