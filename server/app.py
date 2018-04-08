@@ -9,6 +9,10 @@ import json
 import pytesseract
 import base64
 
+from PIL import Image
+import io
+import os
+
 #imported files
 import descriptor
 import temperature
@@ -19,6 +23,8 @@ app = Flask(__name__)
 global current_rasp_image
 current_rasp_temp = None
 current_rasp_humid = None
+global writing 
+writing = False
 GOOGLE_ID ="1ab6abf0-442e-4a84-9d7b-5a9ebd2312ff"
 # 0 = describe
 # 1 = read_image
@@ -61,6 +67,8 @@ def hello_world():
 def imageToServer():
     print (request.json)
     image = request.args.get('image')
+    global writing
+    writing = True
     global current_rasp_image
     current_rasp_image = image
     current_rasp_temp = request.args.get('temp')
@@ -72,6 +80,7 @@ def imageToServer():
 	current_rasp_image = 1
 	print ("OK")
 	print (current_rasp_image)
+	writing = False
         return "Binary message written!"
     elif request.headers['Content-Type'] == 'text/plain':
         print(request.data)
@@ -84,9 +93,13 @@ def imageToServer():
 @app.route('/describeImage')
 def describeImageRequest():
     #Uncomment the following line to only test this method
+    global writing
+    while (writing):
+	pass
+
     global current_rasp_image
     current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
-    print (current_rasp_image)
+    #print (current_rasp_image)
     if current_rasp_image is None:
         return "Not getting image from camera"
     else:
@@ -95,14 +108,24 @@ def describeImageRequest():
         return sent
     return  "ok"
 
+def get_binary_img(path):
+   bytes = bytearray()
+   count = os.stat(path).st_size / 2
+   with open(path, "rb") as f:
+       bb =  bytearray(f.read())
+
+   return Image.open(io.BytesIO(bb))
+
 @app.route('/readImage')
 def readImageRequest():
     global current_rasp_image
+    current_rasp_image = get_binary_img('binary')
     if current_rasp_image is None:
         return "Not getting image from camera"
     else:
         sent = readImage(current_rasp_image)
-        #send to google
+        print (sent)
+	#send to google
         return sent
     return "ok"
 
@@ -124,6 +147,7 @@ def describeImage(img):
 def readImage(img):
     sentence = pytesseract.image_to_string(img)
     return sentence
+
 
 def getHumidityRequest():
     if current_rasp_humid is None:
