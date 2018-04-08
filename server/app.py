@@ -26,6 +26,7 @@ def hello_world():
     result = None
     request_json = request.get_json()
     action = request_json['result']['action']
+    result = ""
     if action == 'describe.picture':
        print('Describe picture query')
        result = describeImageRequest()
@@ -35,10 +36,12 @@ def hello_world():
 
     elif action == 'get.temperature':
         print('Temperature')
-
         result = getTemperatureRequest()
+
     else:
         print('Unsupported action')
+        result = "Action not found"
+    return result
 
 
 
@@ -67,7 +70,7 @@ def describeImageRequest():
     #Uncomment the following line to only test this method
     #current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
     if current_rasp_image is None:
-        pass
+        return "Not getting image from camera"
     else:
         sent = describeImage(current_rasp_image)
         #send to google
@@ -77,7 +80,7 @@ def describeImageRequest():
 @app.route('/readImage')
 def readImageRequest():
     if current_rasp_image is None:
-        pass
+        return "Not getting image from camera"
     else:
         sent = readImage(current_rasp_image)
         #send to google
@@ -87,7 +90,7 @@ def readImageRequest():
 @app.route('/getTemperature')
 def getTemperatureRequest():
     if current_rasp_temp is None:
-        pass
+        return "Not getting temperature from sensor"
     else:
         sent = temperature.create_sentence(current_rasp_temp)
         #send to google
