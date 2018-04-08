@@ -19,9 +19,27 @@ current_rasp_temp = None
 # 0 = describe
 # 1 = read_image
 # 2 = temperature
-@app.route('/')
-def index():
-    return "prova"
+
+
+@app.route('/', methods=['GET','POST'])
+def hello_world():
+    result = None
+    request_json = request.get_json()
+    action = request_json['result']['action']
+    if action == 'describe.picture':
+       print('Describe picture query')
+       result = describeImageRequest()
+   elif action == 'read.picture':
+        print('Reading image')
+        result = readImageRequest()
+
+    elif action == 'get.temperature':
+        print('Temperature')
+
+        result = getTemperatureRequest()
+    else:
+        print('Unsupported action')
+
 
 
 @app.route('/putInfo',methods=['POST'])
