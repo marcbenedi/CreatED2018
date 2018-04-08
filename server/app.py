@@ -29,9 +29,9 @@ def hello_world():
     action = request_json['result']['action']
     result = ""
     if action == 'describe.picture':
-       print('Describe picture query')
-       result = describeImageRequest()
-   elif action == 'read.picture':
+        print('Describe picture query')
+        result = describeImageRequest()
+    elif action == 'read.picture':
         print('Reading image')
         result = readImageRequest()
 
