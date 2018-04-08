@@ -17,6 +17,8 @@ app = Flask(__name__)
 #           0           1               2           3
 current_rasp_image = None
 current_rasp_temp = None
+current_rasp_humid = None
+GOOGLE_ID ="1ab6abf0-442e-4a84-9d7b-5a9ebd2312ff"
 # 0 = describe
 # 1 = read_image
 # 2 = temperature
@@ -38,11 +40,16 @@ def hello_world():
     elif action == 'get.temperature':
         print('Temperature')
         result = getTemperatureRequest()
-
+    elif action == 'get.humidity':
+        print ('Humidity')
+        result = getHumidityRequest()
     else:
         print('Unsupported action')
         result = "Action not found"
-    return result
+
+    response =  createResponseMessage(result)
+
+    return json.dumps(response), 201, {'Content-Type': 'application/json'}
 
 
 
@@ -107,6 +114,22 @@ def readImage(img):
     sentence = pytesseract.image_to_string(img)
     return sentence
 
+def getHumidityRequest():
+    if current_rasp_humid is None:
+        return "No available humidity data from the sensor"
+    else:
+        sent = "The current relative humidity is "+ str(current_rasp_humid)
+        #send to google
+        return sent
+    return "ok"
+
+
+def createResponseMessage (responseText):
+    resp = {
+    "speech": responseText,
+    "displayText": responseText
+    }
+    return resp
 if __name__ == '__main__':
     #app.run(debug=True, port=8092)
     app.run(host='0.0.0.0', port=8080, ssl_context=context, debug=True)
