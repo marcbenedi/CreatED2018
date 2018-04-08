@@ -16,7 +16,7 @@ app = Flask(__name__)
 
 #tasks = send image, read image, send temperature, play music.
 #           0           1               2           3
-current_rasp_image = None
+global current_rasp_image
 current_rasp_temp = None
 current_rasp_humid = None
 GOOGLE_ID ="1ab6abf0-442e-4a84-9d7b-5a9ebd2312ff"
@@ -29,8 +29,6 @@ GOOGLE_ID ="1ab6abf0-442e-4a84-9d7b-5a9ebd2312ff"
 def hello_world():
     if request.method == "GET":
 	return "HOLA"
-    else:
-        return "CACA"
     result = None
     request_json = request.get_json()
     action = request_json['result']['action']
@@ -62,14 +60,18 @@ def hello_world():
 @app.route('/putInfo',methods=['POST'])
 def imageToServer():
     print (request.json)
-#    image = request.args.get('image')
-#    current_rasp_image = image
-#    current_rasp_temp = request.args.get('temp')
+    image = request.args.get('image')
+    global current_rasp_image
+    current_rasp_image = image
+    current_rasp_temp = request.args.get('temp')
     if request.headers['Content-Type'] == 'application/octet-stream':
         with open('./binary', 'wb') as f:
             f.write(request.data)
             f.close()
-        current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
+        #current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
+	current_rasp_image = 1
+	print ("OK")
+	print (current_rasp_image)
         return "Binary message written!"
     elif request.headers['Content-Type'] == 'text/plain':
         print(request.data)
@@ -82,7 +84,9 @@ def imageToServer():
 @app.route('/describeImage')
 def describeImageRequest():
     #Uncomment the following line to only test this method
-    #current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
+    global current_rasp_image
+    current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
+    print (current_rasp_image)
     if current_rasp_image is None:
         return "Not getting image from camera"
     else:
@@ -93,6 +97,7 @@ def describeImageRequest():
 
 @app.route('/readImage')
 def readImageRequest():
+    global current_rasp_image
     if current_rasp_image is None:
         return "Not getting image from camera"
     else:
@@ -138,5 +143,5 @@ def createResponseMessage (responseText):
     return resp
 if __name__ == '__main__':
 #    app.run(debug=True, port=8092)
-    context = ('fullchain.pem','privkey.pem')
-    app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
+    context = ('dupadelchain.pem','privkeydupadel.pem')
+    app.run(host='0.0.0.0', port=8080,ssl_context=context,threaded=True)
