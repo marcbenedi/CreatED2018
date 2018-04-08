@@ -51,8 +51,9 @@ def describeImageRequest():
     CURRENT_INSTRUCTION = 0
     b = None
     with open('binary','rb') as f:
-	b = f.read()
-    current_rasp_image = b
+	       b = f.read()
+           current_rasp_image = base64.b64encode(b)
+
     if current_rasp_image is None:
         pass
     else:
