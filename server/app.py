@@ -1,9 +1,11 @@
 
 #imported libraries
 from flask import Flask
+from clarifai.rest import Image as ClImage
+
 from flask import request
 import pytesseract
-
+import base64
 
 #imported files
 import descriptor
@@ -14,7 +16,6 @@ app = Flask(__name__)
 #           0           1               2           3
 current_rasp_image = None
 current_rasp_temp = None
-CURRENT_INSTRUCTION = -1
 # 0 = describe
 # 1 = read_image
 # 2 = temperature
@@ -33,33 +34,26 @@ def imageToServer():
         with open('./binary', 'wb') as f:
             f.write(request.data)
             f.close()
+        current_rasp_image = ClImage(file_obj=open('binary', 'rb'))
         return "Binary message written!"
     elif request.headers['Content-Type'] == 'text/plain':
         print(request.data)
         return "Text Message: " + request.data
 
-    if CURRENT_INSTRUCTION==0:
-        describeImage(image)
-    elif CURRENT_INSTRUCTION==1:
-        readImage(image)
-    else :
-        pass
+
+
     return 200
 
 @app.route('/describeImage')
 def describeImageRequest():
-    CURRENT_INSTRUCTION = 0
-    b = None
-    with open('binary','rb') as f:
-	       b = f.read()
-           current_rasp_image = base64.b64encode(b)
 
     if current_rasp_image is None:
         pass
     else:
         sent = describeImage(current_rasp_image)
         #send to google
-    return "ok"
+        return sent
+    return  "done"
 
 @app.route('/readImage')
 def readImageRequest():
@@ -68,6 +62,7 @@ def readImageRequest():
     else:
         sent = readImage(current_rasp_image)
         #send to google
+        return sent
     return "ok"
 
 @app.route('/getTemperature')
@@ -77,6 +72,7 @@ def getTemperatureRequest():
     else:
         sent = temperature.create_sentence(current_rasp_temp)
         #send to google
+        return sent
     return "ok"
 
 #python aux functions
