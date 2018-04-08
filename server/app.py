@@ -1,9 +1,10 @@
 
 #imported libraries
 from flask import Flask
-from clarifai.rest import Image as ClImage
-
 from flask import request
+from clarifai.rest import Image as ClImage
+from OpenSSL import SSL
+
 import pytesseract
 import base64
 
@@ -107,4 +108,5 @@ def readImage(img):
     return sentence
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8092)
+    #app.run(debug=True, port=8092)
+    app.run(host='0.0.0.0', port=8080, ssl_context=context, debug=True)
