@@ -1,9 +1,10 @@
-
+# -*- coding: utf-8 -*-
 #imported libraries
 from flask import Flask
 from flask import request
 from clarifai.rest import Image as ClImage
 from OpenSSL import SSL
+import json
 
 import pytesseract
 import base64
@@ -26,9 +27,14 @@ GOOGLE_ID ="1ab6abf0-442e-4a84-9d7b-5a9ebd2312ff"
 
 @app.route('/', methods=['GET','POST'])
 def hello_world():
+    if request.method == "GET":
+	return "HOLA"
+    else:
+        return "CACA"
     result = None
     request_json = request.get_json()
     action = request_json['result']['action']
+    print(request_json)
     result = ""
     if action == 'describe.picture':
         print('Describe picture query')
@@ -131,5 +137,6 @@ def createResponseMessage (responseText):
     }
     return resp
 if __name__ == '__main__':
-    #app.run(debug=True, port=8092)
-    app.run(host='0.0.0.0', port=8080, ssl_context=context, debug=True)
+#    app.run(debug=True, port=8092)
+    context = ('fullchain.pem','privkey.pem')
+    app.run(host='0.0.0.0', port=5000, ssl_context=context, debug=True)
